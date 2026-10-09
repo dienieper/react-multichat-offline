@@ -1,0 +1,41 @@
+import { useEffect, useRef } from 'react'
+import type { Message } from '../types/message'
+import MessageBubble from './MessageBubble'
+
+type MessageListProps = {
+  messages: Message[] | null
+}
+
+export default function MessageList({ messages }: MessageListProps) {
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!messages?.length) return
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  if (messages === null) {
+    return (
+      <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 pb-6">
+        <p className="text-center text-stone-600">Crie ou selecione uma conversa</p>
+      </div>
+    )
+  }
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 pb-6">
+        <p className="text-center text-stone-600">Nenhuma mensagem ainda. Envie a primeira!</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto p-4 pb-6">
+      {messages.map((message) => (
+        <MessageBubble key={message.id} message={message} />
+      ))}
+      <div ref={bottomRef} />
+    </div>
+  )
+}
